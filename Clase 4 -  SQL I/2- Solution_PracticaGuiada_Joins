@@ -1,0 +1,42 @@
+﻿-- Se desea visualizar las órdenes con su respectivo cliente, imprimiendo en la respuesta OrderID, CompanyName y OrderDate
+SELECT orders."OrderID", customers."CompanyName", orders."OrderDate"
+FROM orders
+INNER JOIN customers ON orders."CustomerID"=customers."CustomerID";
+
+-- Se desea visualizar los clientes que no hayan realizado órdenes, imprimiendo en la respuesta CustomerID y CompanyName.
+SELECT customers."CustomerID", customers."CompanyName"
+FROM customers
+LEFT JOIN orders ON orders."CustomerID"=customers."CustomerID"
+WHERE orders."CustomerID" IS NULL;
+
+-- ¿Cuántos productos por categoría contiene el catálogo? Imprima la respuesta con CategoryName y Cantidad.
+SELECT "CategoryName", count("ProductID") AS "Cantidad"
+FROM categories AS c
+LEFT JOIN products AS p ON p."CategoryID" = c."CategoryID"
+GROUP BY c."CategoryName"
+ORDER BY "Cantidad" DESC;
+
+-- ¿Cuáles son los 5 clientes que están generando los mayores ingresos? Imprima una tabla con CustomerID e Ingresos. Tendrá que utilizar datos de 3 tablas.
+SELECT c."CustomerID",
+     SUM("UnitPrice" *
+         "Quantity" *
+         (1.0 - "Discount"))
+    AS "Ingresos"
+FROM customers AS c
+JOIN orders AS o ON c."CustomerID" = o."CustomerID"
+JOIN order_details AS od ON o."OrderID" = od."OrderID"
+GROUP BY c."CustomerID"
+ORDER BY "Ingresos" DESC
+LIMIT 5;
+
+-- ¿En qué países se encuentran los 5 principales proveedores por número de unidades suministradas que hayan sido vendidas? Imprima una tabla con el CompanyName del proveedor, Country y el número total de Unidades Vendidas.
+SELECT s."CompanyName", s."Country",
+     SUM(od."Quantity") AS "Unidades"
+FROM suppliers AS s
+JOIN products AS p
+     ON s."SupplierID" = p."SupplierID"
+JOIN order_details AS od 
+     ON p."ProductID" = od."ProductID"
+GROUP BY s."SupplierID"
+ORDER BY "Unidades" DESC
+LIMIT 5;

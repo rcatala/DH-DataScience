@@ -1,0 +1,11 @@
+﻿-- Seleccionar los order details con un precio mayor a 10 inspeccionando el plan de ejecución
+EXPLAIN ANALYZE SELECT * FROM order_details WHERE "UnitPrice" > 10;
+
+-- Crear un ínidce de tipo b-tree sobre el campo UnitPrice de la tabla order details
+CREATE INDEX idx_price_order on order_details ("UnitPrice");
+
+-- Ejecutar la misma consulta inspeccionando el plan de ejecución
+EXPLAIN ANALYZE SELECT * FROM order_details WHERE "UnitPrice" > 10;
+
+-- Eliminar el índice
+DROP INDEX idx_price_order;

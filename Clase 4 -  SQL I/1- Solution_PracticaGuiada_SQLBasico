@@ -1,0 +1,41 @@
+﻿-- Listar las órdenes empezando por las más recientes (ORDER BY + LIMIT)
+select * from orders order by "OrderDate" DESC LIMIT 10;
+
+-- Seleccionar los campos CustomerID y EmployeeID de la tabla orders y asignarles un alias (ALIASES)
+select "CustomerID" as cid, "EmployeeID" as eid from orders order by "OrderDate" DESC LIMIT 10;
+
+-- Obtener los clientes de ciudades que comiencen con la letra S (mayúscula). (OPERADOR LIKE)
+select * from customers where "City" like 'S%';
+
+-- Obtener las ciudades de los clientes, mostrando una sola vez cada ciudad. (OPERADOR DISTINCT)
+select distinct "City" from customers;
+
+--Enumerar los descuentos que fueron aplicados en las órdenes, comenzando por el mayor. 
+select distinct "Discount" from order_details order by "Discount" DESC;
+
+--Obtener sólo 3 de las ciudades de los clientes, mostrando una sola vez cada ciudad. 
+select distinct "City" from customers limit 3;
+
+-- Obtener la cantidad de ítems adquiridos en cada orden (OPERADOR GROUP BY)
+select "OrderID", count(*) from order_details GROUP BY "OrderID";
+
+-- Calcular el total de cada orden, sin considerar los descuentos
+select "OrderID", SUM("UnitPrice" * "Quantity") from order_details 
+GROUP BY "OrderID";
+
+-- Traer el número y el total de cada orden para órdenes mayores a $500. Renombrar el total con un alias.
+select "OrderID", SUM("UnitPrice" * "Quantity") as total from order_details 
+GROUP BY "OrderID"
+having SUM("UnitPrice" * "Quantity") > 500;
+
+
+-- Calcular el total de cada orden, considerando el descuento
+select "OrderID", SUM("UnitPrice" * "Quantity" * (1 - "Discount")) from order_details 
+GROUP BY "OrderID";
+
+-- Calcular, para cada orden, el total original y el total con descuento sólo de los ítems que tienen un 10% de descuento o más.
+select "OrderID", SUM("UnitPrice" * "Quantity" * (1 - "Discount")) total_desc, SUM("UnitPrice" * "Quantity") tot_original
+from order_details
+WHERE  "Discount" >= 0.1
+GROUP BY "OrderID";
+
